@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_yasg",
     "banking",
+    "command_server",
 ]
 
 REST_FRAMEWORK = {
@@ -86,6 +87,12 @@ DATABASES = {
         },
     }
 }
+
+# RabbitMQ 설정
+RABBITMQ_HOST = os.getenv("RABBITMQ_HOST", "localhost")
+
+# 메시지 큐 전송 기능 활성화 여부를 환경 변수로 설정
+ENABLE_MQ = os.getenv("ENABLE_MQ", "true").lower() == "true"
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

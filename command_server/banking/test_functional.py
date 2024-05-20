@@ -1,12 +1,24 @@
+import os
+
 from django.contrib.auth.models import User
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from .models import Account, Transaction
+from command_server.banking.models import Account, Transaction
 
 
 class BankingAPITest(APITestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        os.environ["ENABLE_MQ"] = "false"
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        os.environ["ENABLE_MQ"] = "true"
+
     def setUp(self):
         self.user1 = User.objects.create_user(
             username="testuser1", password="testpassword1"

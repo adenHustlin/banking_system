@@ -1,3 +1,4 @@
+import os
 import threading
 from time import sleep
 
@@ -6,10 +7,20 @@ from django.test import TransactionTestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from .models import Account, Transaction
+from command_server.banking.models import Account, Transaction
 
 
 class ConcurrencyTestCase(TransactionTestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        os.environ["ENABLE_MQ"] = "false"
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        os.environ["ENABLE_MQ"] = "true"
+
     def setUp(self):
         self.client1 = APIClient()
         self.user1 = User.objects.create_user(

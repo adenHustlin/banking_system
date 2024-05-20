@@ -1,10 +1,22 @@
+import os
+
 from django.contrib.auth.models import User
 from django.test import TestCase
 
-from .models import Account, Transaction
+from command_server.banking.models import Account, Transaction
 
 
 class AccountModelTest(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        os.environ["ENABLE_MQ"] = "false"
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        os.environ["ENABLE_MQ"] = "true"
+
     def setUp(self):
         self.user = User.objects.create_user(
             username="testuser", password="testpassword"

@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import OperationalError, transaction
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -29,6 +30,11 @@ class AccountViewSet(viewsets.ModelViewSet):
 class DepositViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="Deposit money into an account",
+        request_body=DepositSerializer,
+        responses={201: "Deposit successful", 400: "Invalid input", 403: "Forbidden"},
+    )
     @retry(OperationalError, tries=5, delay=1, backoff=2)
     def create(self, request):
         """
@@ -89,6 +95,11 @@ class DepositViewSet(viewsets.ViewSet):
 class WithdrawViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="Withdraw money from an account",
+        request_body=WithdrawSerializer,
+        responses={201: "Withdraw successful", 400: "Invalid input", 403: "Forbidden"},
+    )
     @retry(OperationalError, tries=5, delay=1, backoff=2)
     def create(self, request):
         """

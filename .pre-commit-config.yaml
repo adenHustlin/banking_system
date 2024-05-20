@@ -21,9 +21,10 @@ repos:
 
   - repo: local
     hooks:
-      - id: run-command-server-tests
+      - id: run-command-command_server-tests
         name: Run Command Server tests
-        entry: bash -c 'export DJANGO_SETTINGS_MODULE=command_server.settings && python command_server/manage.py test'
+        entry: >
+          bash -c 'cd command_server python manage.py test'
         language: system
         types: [ python ]
         always_run: true

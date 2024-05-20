@@ -1,11 +1,29 @@
+from django.contrib.auth.models import User
 from django.db import OperationalError, transaction
 from rest_framework import status, viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from .models import Account, Transaction
-from .serializers import DepositSerializer, WithdrawSerializer
+from .serializers import (
+    AccountSerializer,
+    DepositSerializer,
+    UserSerializer,
+    WithdrawSerializer,
+)
 from .utils import retry
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+
+
+class AccountViewSet(viewsets.ModelViewSet):
+    queryset = Account.objects.all()
+    serializer_class = AccountSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class DepositViewSet(viewsets.ViewSet):

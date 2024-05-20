@@ -53,15 +53,28 @@ class Command(BaseCommand):
         )
         channel = connection.channel()
 
-        def callback(ch, method, properties, body):
-            message = json.loads(body)
-            handle_message(message)
-
         queues = [
             "auth_user_queue",
             "banking_account_queue",
             "banking_transaction_queue",
         ]
+
+        # Declare queues with the desired properties
+        for queue in queues:
+            try:
+                channel.queue_delete(queue=queue)  # 기존 큐 삭제
+                channel.queue_declare(queue=queue)  # 새로운 큐 선언
+            except pika.exceptions.ChannelClosedByBroker as e:
+                print(f"Error declaring queue {queue}: {e}")
+                connection = pika.BlockingConnection(
+                    pika.ConnectionParameters(settings.RABBITMQ_HOST)
+                )
+                channel = connection.channel()
+
+        def callback(ch, method, properties, body):
+            message = json.loads(body)
+            handle_message(message)
+
         for queue in queues:
             channel.basic_consume(
                 queue=queue, on_message_callback=callback, auto_ack=True
